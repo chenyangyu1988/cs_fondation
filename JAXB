@@ -1,0 +1,7 @@
+JAXB (Java architecture for XML binding)
+
+1. Features
+
+• Marshall: transfer Java object to XML
+• Unmarshall: transfer XML to Java object
+• Provides a fast and convenient way to bind XML schemas and Java representations

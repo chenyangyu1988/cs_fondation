@@ -1,0 +1,164 @@
+Garbage Collection
+
+Garbage collection (GC) is the process that aims to free up occupied memory that is no longer referenced by any reachable Java object, and is an essential part of the Java virtual machine's (JVM's) dynamic memory management system.
+• still been referenced object are kept
+• not been referenced objects are freed and reclaimed to enable new object allocation
+
+Part 1: Garbage collection and the Java platform memory model
+
+1. -Xmx: 2g (2G java heap)
+• refered as head
+• dedicated address for object to be allocated
+
+2. GC hanppen
+• the java heap will be full and GC will happen (call garbage collector)
+• triggered by java program System.gc()
+• it is safe to start a GC when all active threads are at a safe state
+
+3. **** Rule for garbage collector 
+• To quickly free unreferenced memory in order to satisfy an application's allocation rate so that it doesn't run out of memory.
+• To reclaim memory while minimally impacting the performance (e.g., latency and throughput) of a running application.
+
+
+Part 2: Two kinds of garbage collection
+
+1. Reference counting collectors
+
+1) Reference counting collectors keep track of how many references are pointing to each Java object
+
+• Once the count for an object => 0, the memory can be immediately recalimed (Major advantage)
+
+• Keeping all reference counts up to date can be quite costly
+
+• keeping the reference counts accurate and handling circular structures
+
+2. Tracing collectors
+
+1) Basic
+• based on the assumption that all live objects can be found by iteratively tracing all references and subsequent references from an initial set of known to be live objects (root objects)
+
+• The initial set of live objects (called root objects or just roots for short) are located by analyzing the registers, global fields, and stack frames at the moment when a garbage collection is triggered
+
+• Once the tracing collector has found all live objects, it will reclaim the remaining memory
+
+• can handle circular structures
+
+2) Copying collectors 
+
+
+
+
+
+
+
+
+
+
+
+Jave Memory Management
+
+1. How Garbage Collection Really Works
+
+1) Basic
+• Live objects are tracked and everything else designated garbage
+
+• heap, which is the area of memory used for dynamic allocation
+
+2) operating system allocates the heap in advance to be managed by the JVM (创造和删除很快)
+
+=> Object creation is faster because global synchronization with the operating system is not needed for every single object
+
+=> When an object is no longer used, the garbage collector reclaims the underlying memory and reuses it for future object allocation
+
+
+2. Garbage-Collection Roots — The Source of All Object Trees
+
+1) four kinds of GC roots
+• local variable: kept alive by the stack of a thread
+• active java threads: considered live objects and are therefore GC roots
+• static variables: referenced by their classes
+• JNI References: Java objects that the native code has created as part of a JNI call.
+
+2) Marking and Sweeping Away Garbage
+• The algorithm traverses all object references, starting with the GC roots, and marks every object found as alive.
+• All of the heap memory that is not occupied by marked objects is reclaimed. It is simply marked as free, essentially swept free of unused objects.
+
+3) memory leaks
+• remove unreachable-but-not-deleted objects in memory
+• this may cause memory leaks (forgotten unreferenced object)
+
+
+Understanding Java Garbage Collection
+
+1. **** Stop the world
+
+• 运行GC的时候会停止application, 当运行完了之后才会继续
+• the JVM is stopping the application from running to execute a GC. When stop-the-world occurs, every thread except for the threads needed for the GC will stop their tasks. The interrupted tasks will resume only after the GC task has completed. GC tuning often means reducing this stop-the-world time.
+
+2. Generational Garbage Collection 
+
+1）Hypotheses
+
+• Most objects soon become unreachable.
+• References from old objects to young objects only exist in small numbers. 
+
+2) Young generation and old generation
+
+• yount generation: Most of the newly created objects are located here. Since most objects soon become unreachable, many objects are created in the young generation, then disappear 	=> minor GC
+• old generation: he objects that did not become unreachable and survived from the young generation are copied here => major GC
+
+• Card table: store object in Old gen => object in Young gen.  reduce overall GC
+
+3) Composition of the Young gen
+
+• one Eden space, two survivor space
+
+• Execution order
+
+- The majority of newly created objects are located in the Eden space.
+- After one GC in the Eden space, the surviving objects are moved to one of the Survivor spaces. 
+- After a GC in the Eden space, the objects are piled up into the Survivor space, where other surviving objects already exist.
+- Once a Survivor space is full, surviving objects are moved to the other Survivor space. Then, the Survivor space that is full will be changed to a state 	 where there is no data at all.
+- The objects that survived these steps that have been repeated a number of times are moved to the old generation.
+
+• Bump the pointer: tracks the last object allocated to the Eden space; when new objects are created, only the lastly added object needs to be checked, which allows much faster memory allocations. However
+
+• TLAB: This allows each thread to have a small portion of its Eden space that corresponds to its own share
+
+3. GC for the old generation
+
+1) Serial GC (one thread to do GC)
+
+• Young GC: use the type (1 eden, 2 survivor spaces)
+• Old GC: mark-sweep-compact
+ - The first step of this algorithm is to mark the surviving objects in the old generation.
+ - Then, it checks the heap from the front and leaves only the surviving ones behind (sweep).
+ - In the last step, it fills up the heap from the front with the objects so that the objects are piled up consecutively, and divides the heap into two     parts: one with objects and one without objects (compact).
+
+
+ 2) Parallel GC and parallel old GC(throuput GC, multiple thread to do GC)
+
+ • mark – summary – compaction
+ The summary step identifies the surviving objects separately for the areas that the GC have previously performed
+
+ 3) CMS GC (used when the response time from all applications is crucial)
+
+ • initial mark step (stop the world pause)
+ - The surviving objects among the objects the closest to the classloader are searched
+
+ • concurrent mark
+ - objects referenced by the surviving objects that have just been confirmed are tracked and checked
+
+ • remark 
+ - the objects that were newly added or stopped being referenced in the concurrent mark step are checked
+
+ • concurrent sweep
+ - the garbage collection procedure takes place. The garbage collection is carried out while other threads are still being processed
+
+4) Garbage Fist GC
+
+• one object is allocated to each grid, and then a GC is executed
+• once one area is full, the objects are allocated to another area, and then a GC is executed
+
+• Advantages: performance, faster than any other GC types
+

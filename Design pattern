@@ -1,6 +1,7 @@
 Types of Design Patterns
 
 Pattern & Description
+
 1. Creational Patterns
 • These design patterns provides way to create objects while hiding the creation logic, rather than instantiating objects directly using new opreator. This gives program more flexibility in deciding which objects need to be created for a given use case.
 • 不用new来创建object, 而是提供了一个method来让program生成method
@@ -20,7 +21,7 @@ Design Patterns
 
 A: Creational Patterns
 
-1. Factory Pattern 
+1. Factory Pattern (JDBC, ThreadPool)
 • In Factory pattern, we create object without exposing the creation logic to the client and refer to newly created object using a common interface.
 • 用一个interface, 将要生成什么object传入, 返回object
 
@@ -33,7 +34,7 @@ A: Creational Patterns
 • In Abstract Factory pattern an interface is responsible for creating a factory of related objects, without explicitly specifying their classes. Each generated factory can give the objects as per the Factory pattern
 • FactoryProducer => Factory => Object
 
-3. Singleton Pattern
+3. Singleton Pattern (Web Server)
 • This pattern involves a single class which is responsible to creates own object while making sure that only single object get created. This class provides a way to access its only object which can be accessed directly without need to instantiate the object of the class
 
 1) getInstance() to get the instance of this object
@@ -43,7 +44,7 @@ A: Creational Patterns
 • A Builder class builds the final object step by step. This builder is independent of other objects.
 • 一个object包含另外一个object, 最终构成结果
 
-5. Prototype Pattern
+5. Prototype Pattern (Query Database)
 • This pattern involves implementing a prototype interface which tells to create a clone of the current object. This pattern is used when creation of object directly is costly. For example, a object is to be created after a costly database operation. We can cache the object, returns its clone on next request and update the database as as and when needed thus reducing database calls
 • 创建一个clone的object, 比如创建此object需要database query
 
@@ -56,14 +57,14 @@ B: Structural Pattern
 
 1. Adaptor Pattern
 • This pattern involves a single class which is responsible to join functionalities of independent or incompatible interfaces. A real life example could be a case of card reader which acts as an adapter between memory card and a laptop. You plugins the memory card into card reader and card reader into the laptop so that memory card can be read via laptop
-• adaptor用别的object来完成任务
+• 两个不兼容的object(一个是低级的, 一个是高级的), 要让低级的兼容高级的, 有一个adaptor(包含高级的object), 在低级的里面加入这个adaptor field
 
 1）adaptor implement 一个基础的interface
 2) 在里面创建另外一个object, 用这个object来扩展新的功能
 
-2. Bridge Pattern
+2. ****Bridge Pattern
 • This pattern involves an interface which acts as a bridge which makes the functionality of concrete classes independent from interface implementer classes. Both types of classes can be altered structurally without affecting each other.
-• 别的object用bridge来完成任务
+• 两个object分别有不同的method, 用一个bridge来使一个object可以用另一个object的方法来实现
 
 1) bridge interface 去定义一个method来完成一件事情
 2) concrete object会调用bridge的实现类来完成某项任务 (这样就实现了方法上的独立)
@@ -75,7 +76,7 @@ B: Structural Pattern
 1） 创建一个abstract class去
 2) 用这个abstract class来扩展interface的值
 
-4. ***** Composite Pattern 
+4. ***** Composite Pattern (Json format, SectionGroup)
 • Composite pattern is used where we need to treat a group of objects in similar way as a single object. Composite pattern composes objects in term of a tree structure to represent part as well as whole hierarchy . This type of design pattern comes under structural pattern as this pattern creates a tree structure of group of objects.
 • 自己包含自己 (比如yahoo的SectionGroup)
 
@@ -85,3 +86,8 @@ B: Structural Pattern
 • 一个interface 来定义filter的内容
 
 This pattern creates a class contains group of its own objects. This class provides ways to modify its group of same objects.
+
+
+6. ******Facade Pattern
+• hides the complexities of the system and provides an interface to the client using which the client can access the system. This type of design pattern comes under structural pattern as this pattern adds an interface to exiting system to hide its complexities. This pattern involves a single class which provides simplified methods which are required by client and delegates calls to existing system classes methods.
+• facade object里面调用别的object来提供给用户功能

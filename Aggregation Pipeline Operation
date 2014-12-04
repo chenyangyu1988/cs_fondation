@@ -1,0 +1,69 @@
+Aggregation Pipeline Operation
+
+db.collections.aggregate([aggregation1, aggregation2])
+
+1. $project
+
+{ $project : {<specifications> } }
+
+1) Syntax				Description
+<field>: <1 or true>	Specify the inclusion of a field.
+_id: <0 or false>		Specify the suppression of the _id field.
+<field>: <expression>	Add a new field or reset the value of an existing field.
+
+
+2) add new fields or reset existing fields
+To add a new field or to reset the value of an existing field, specify the field name and set its value to some expression.
+
+Ex: 
+prefix: { $substr: [ "$isbn", 0, 3 ] }
+lastName: "$author.last"
+
+
+3) embedded document fields
+• dot notation: concat.address.country
+
+• concat: {address: {country: <>}} 
+
+
+2. $group
+
+{ $group: { _id: <expression>, <field1>: { <accumulator1> : <expression1> }, ... } }
+• _id  ==>  group key
+• field  ==>  aggregate
+
+
+1) 
+• The _id field is mandatory; however, you can specify an _id value of null to calculate accumulated values for all the input documents as a whole.
+
+• The remaining computed fields are optional and computed using the <accumulator> operators.
+
+2) Accumulator operator
+Name	Description
+$addToSet	Returns an array of unique expression values for each group. Order of the array elements is undefined.
+$avg	Returns an average for each group. Ignores non-numeric values.
+$first	Returns a value from the first document for each group. Order is only defined if the documents are in a defined order.
+$last	Returns a value from the last document for each group. Order is only defined if the documents are in a defined order.
+$max	Returns the highest expression value for each group.
+$min	Returns the lowest expression value for each group.
+$push	Returns an array of expression values for each group.
+$sum 	Returns a sum for each group. Ignores non-numeric values.
+
+
+
+
+
+
+1. $elemMath
+
+1) array element match
+
+db.survey.find(
+   { results: { $elemMatch: { product: "xyz", score: { $gte: 8 } } } }
+)
+
+2) array of embedded documents
+
+db.survey.find(
+   { results: { $elemMatch: { product: "xyz", score: { $gte: 8 } } } }
+)

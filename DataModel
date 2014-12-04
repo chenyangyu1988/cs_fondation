@@ -1,0 +1,29 @@
+Data Model
+
+1. Data model introduction
+
+1) The key decision in designing data models for MongoDB applications revolves around the structure of documents and how the application represents relationships between data. There are two tools that allow applications to represent these relationships: references and embedded documents.
+
+• references
+References store the relationships between data by including links or references from one document to another. Applications can resolve these references to access the related data. Broadly, these are normalized data models
+
+• Embedded Data
+Embedded documents capture relationships between data by storing related data in a single document structure. MongoDB documents make it possible to embed document structures as sub-documents in a field or array within a document.
+
+
+2. Data Model Design
+
+1) Embedded Data (better for read)
+
+• Embedded data models allow applications to store related pieces of information in the same database record. As a result, applications may need to issue fewer queries and updates to complete common operations.
+
+• use embedded data models when:
+- you have “contains” relationships between entities. See Model One-to-One Relationships with Embedded Documents.
+- you have one-to-many relationships between entities. In these relationships the “many” or child documents always appear with or are viewed in the context of the “one” or parent documents. See Model One-to-Many Relationships with Embedded Documents.
+
+2) Normalized Data
+
+• use normalized data models:
+- when embedding would result in duplication of data but would not provide sufficient read performance advantages to outweigh the implications of the duplication.
+- to represent more complex many-to-many relationships.
+- to model large hierarchical data sets.

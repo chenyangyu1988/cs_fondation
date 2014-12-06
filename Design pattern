@@ -85,3 +85,13 @@ B: Structural Pattern
 • 一个interface 来定义filter的内容
 
 This pattern creates a class contains group of its own objects. This class provides ways to modify its group of same objects.
+
+
+6. Flyweight Pattern
+• Flyweight pattern is primarily used to reduce the number of objects created, to decrease memory footprint and increase performance
+, Flyweight pattern try to reuse already existing similar kind objects by storing them and creates new object when no matching object is found
+
+1) 一个factory pattern来用一个hash map保存创建过的object
+2) 如果有这个object, 就不创建新的了
+
+

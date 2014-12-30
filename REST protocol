@@ -1,0 +1,67 @@
+REST Tutorail
+
+1. REST
+
+1) REST stands for Representational State Transfer. (It is sometimes spelled "ReST".) It relies on a stateless, client-server, cacheable communications protocol -- and in virtually all cases, the HTTP protocol is used.
+
+2) REST is an architecture style for designing networked applications. use simple HTTP is used to make calls between machines.
+
+3) a REST service is:
+• Platform-independent (you don't care if the server is Unix, the client is a Mac, or anything else),
+• Language-independent (C# can talk to Java, etc.),
+• Standards-based (runs on top of HTTP), and
+• Can easily be used in the presence of firewalls.
+
+4) Not REST => cookies
+The "ST" in "REST" stands for "State Transfer", and indeed, in a good REST design operations are self-contained, and each request carries with it (transfers) all the information (state) that the server needs in order to complete it.
+
+5) Compare
+• It's easy to see why Web Services are often used with libraries that create the SOAP/HTTP request and send it over, and then parse the SOAP response.
+• With REST, a simple network connection is all you need. You can even test the API directly, using your browser.
+
+
+2. REST Protocol
+
+1) It is a common convention in REST design to use nouns rather than verbs to denote simple resources.
+
+2) • REST can easily handle more complex requests, including multiple parameters. In most cases, you'll just use HTTP GET parameters in the URL.
+   If you need to pass long parameters, or binary ones, you'd normally use HTTP POST requests, and include the parameters in the POST body.
+   • One advantage of using XML is type safety. However, in a stateless system like REST, you should always verify the validity of your input, XML or otherwise!
+
+
+3. Server Response
+
+1) Response can be in any formats
+Each format has its own advantages and disadvantages. XML is easy to expand (clients should ignore unfamiliar fields) and is type-safe; CSV is more compact; and JSON is trivial to parse in JavaScript clients (and easy to parse in other languages, too).
+
+2) HTML or documents are sometimes used
+
+
+4. Key of REST architecture
+• Resources, which are identified by logical URLs. Both state and functionality are represented using resources.
+The logical URLs imply that the resources are universally addressable by other parts of the system.
+Resources are the key element of a true RESTful design, as opposed to "methods" or "services" used in RPC and SOAP Web Services, respectively. You do not issue a "getProductName" and then a "getProductPrice" RPC calls in REST; rather, you view the product data as a resource -- and this resource should contain all the required information (or links to it).
+
+• A web of resources, meaning that a single resource should not be overwhelmingly large and contain too fine-grained details. Whenever relevant, a resource should contain links to additional information -- just as in web pages.
+
+• The system has a client-server, but of course one component's server can be another component's client.
+
+• There is no connection state; interaction is stateless (although the servers and resources can of course be stateful). Each new request should carry all the information required to complete it, and must not rely on previous interactions with the same client.
+
+• Resources should be cachable whenever possible (with an expiration date/time). The protocol must allow the server to explicitly specify which resources may be cached, and for how long.
+	- Since HTTP is universally used as the REST protocol, the HTTP cache-control headers are used for this purpose.
+	- Clients must respect the server's cache specification for each resource.
+
+• Proxy servers can be used as part of the architecture, to improve performance and scalability. Any standard HTTP proxy can be used.
+
+
+5. REST Design Guidelines
+1). Do not use "physical" URLs. A physical URL points at something physical -- e.g., an XML file: "http://www.acme.com/inventory/product003.xml". A logical URL does not imply a physical file: "http://www.acme.com/inventory/product/003".
+Sure, even with the .xml extension, the content could be dynamically generated. But it should be "humanly visible" that the URL is logical and not physical.
+2). Queries should not return an overload of data. If needed, provide a paging mechanism. For example, a "product list" GET request should return the first n products (e.g., the first 10), with next/prev links.
+3). Even though the REST response can be anything, make sure it's well documented, and do not change the output format lightly (since it will break existing clients).
+Remember, even if the output is human-readable, your clients aren't human users.
+If the output is in XML, make sure you document it with a schema or a DTD.
+4). Rather than letting clients construct URLs for additional actions, include the actual URLs with REST responses. For example, a "product list" request could return an ID per product, and the specification says that you should use http://www.acme.com/product/PRODUCT_ID to get additional details. That's bad design. Rather, the response should include the actual URL with each item: http://www.acme.com/product/001263, etc.
+Yes, this means that the output is larger. But it also means that you can easily direct clients to new URLs as needed, without requiring a change in client code.
+5). GET access requests should never cause a state change. Anything that changes the server state should be a POST request (or other HTTP verbs, such as DELETE).

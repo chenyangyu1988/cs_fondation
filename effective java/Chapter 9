@@ -1,0 +1,77 @@
+Concurrency
+
+Item 66: Synchronize access to shared mutable data
+
+http://www.infoq.com/cn/articles/java-memory-model-1
+
+1. synchronized key word
+
+1) features
+• ensures that only a single thread can execute a method or block at one time
+
+• Not only does synchronization prevent a thread from observing an object in an inconsistent state, but it ensures that each thread entering a synchronized method or block sees the effects of all previous modifications that were guarded by the same lock
+
+2) usage
+
+• Synchronization is required for reliable communication between threads as well as for mutual exclusion
+
+• Synchronization has no effect unless both read and write operations are synchronized
+
+
+3) volatile
+
+• volatile modifier performs no mutual exclusion, it guarantees that any thread that reads the field will see the most recently written value (只适用于boolean这种, 如果integer也不一定对)
+
+• java每个线程有变量的副本(local copy), volatile是让线程不存在自己的copy
+
+
+4) not use synchronization
+
+• confine mutable data to a single thread
+
+5) summary
+
+• when multiple threads share mutable data, each thread that reads or writes the data must perform synchronization
+
+
+Item 67: Avoid excessive synchronization
+
+1. To avoid liveness and safety failures, never cede control to the client within a synchronized method or block (inside a synchronized region, do not invoke a method that is designed to be overridden, or one provided by a client in the form of a function object)
+
+• don't invoke alien method in synchronized method
+
+2. Avoid open call (An alien method invoked outside of a synchronized region)
+
+• As a rule, you should do as little work as possible inside synchronized regions.
+
+3. performance
+
+• it is the lost opportunities for parallelism and the delays imposed by the need to ensure that every core has a consistent view of memory
+
+• use various techniques to achieve high concurrency, such as lock splitting, lock striping, and nonblocking concurrency control
+
+
+Item 68: Prefer executors and tasks to threads
+
+• If you’re writing a small program, or a lightly loaded server, using Executors.new- CachedThreadPool
+
+• a heavily loaded production server, you are much better off using Executors.newFixedThreadPool
+
+
+
+Item 69: Prefer concurrency utilities to wait and notify
+
+1. use concurrency utilities
+
+• Given the difficulty of using wait and notify correctly, you should use the higher-level concurrency utilities instead
+
+• it is impossible to exclude concurrent activity from a concurrent collection; locking it will have no effect (have concurrent list, set and map)
+
+• use ConcurrentHashMap in preference to Collections.synchro- nizedMap or Hashtable
+
+2. Synchronizers: enable threads to wait for one another
+
+• CountDownLatch and Semaphore
+
+
+

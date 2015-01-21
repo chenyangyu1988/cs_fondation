@@ -1,0 +1,160 @@
+Creating and Destoying Objects
+
+1. static factory methods
+
+1) Advantages
+
+• have names: more meaningful and resolve same signature problem
+• *** not required to create a new object each time been invoded (15)
+• *** can return an object of any subtype of their return type (constructor not public, 52, 32)
+• reduce the verbosity of creating parameterized type instances
+
+2) vs factory pattern
+
+• static factory method is a substitute of constructor, resolve same signature problem(same method name, same parameter)
+
+• factory pattern: an interface to create object and don't exposing the creation logic to the client
+
+
+3) Implementations
+
+Interface-based framework 
+• Jave Collections:  returned object has precisely the API specified by its interface, refer to the returned object by its interface rather than its implementa- tion class
+
+• EnumSet: class of the returned object can also vary from release to release for enhanced software maintainability and performance
+
+service provider frameworks
+• JDBC: 
+- service interface: which providers implement(register this to provider)
+- provider registration API: which the system uses to register implementations, giving clients access to them
+- service access API: which clients use to obtain an instance of the service
+
+Services { Provider { Service}}
+
+4) Disadvantages
+
+• providing only static factory methods is that classes without public or protected constructors cannot be subclassed
+• static factory methods is that they are not readily distinguishable from other static methods
+
+
+
+2. builder (when have many optional initial parameters)
+
+ • the Builder pattern is a good choice when designing classes whose constructors or static factories would have more than a handful of parameters
+
+1) alternative ways
+
+• telescoping constructor pattern
+- construct of paramters size from i to n
+
+• javabeans pattern
+- use set method
+- JavaBean may be in an inconsistent state partway through its construction
+- precludes the possibility of making a class immutable 
+
+2) builder pattern
+
+• builder inner class
+- calls a constructor (or static factory) with all of the required parameters and gets a builder object
+- calls setter-like methods on the builder object to set each optional parameter of interest
+- calls a parame- terless build method to generate the object, which is immutable
+
+- new NutritionFacts.Builder(240, 8).
+     calories(100).sodium(35).carbohydrate(27).build()
+
+• invariant
+- build() can check these invariants
+- setter() check these invariants
+
+3) advantages
+• A single builder can be used to build multiple objects (generic)
+
+
+
+3. Singleton
+
+1) implementation
+• keeping the constructor private and exporting a public static member to provide access to the sole instance
+
+a) public static final Elvis INSTANCE = new Elvis()
+
+• caveat:  a privileged client can invoke the private constructor reflectively with the aid of the AccessibleObject.setAccessible method 
+
+• advantage: the declarations make it clear that the class is a singleton
+
+b) public static Elvis getInstance() { return INSTANCE; }
+
+• gives you the flexibility to change your mind about whether the class should be a singleton without changing its API (unique for each thread)
+
+2) use enum to implement singleton (best way to implement a singleton)
+
+• thread safe and serialization will not create new object
+
+• one instance enum will ensure singleton class
+
+
+
+4. Enforce noninstantiability with a private constructor
+
+1) a class can be made noninstantiable by including a private constructor
+
+• the default constructor will not be generated
+
+• make the private constructor throw an exception
+
+2) this class is a grouping of static methods and static fields (Collections)
+
+
+
+5. Avoid creating unnecessary objects
+
+• rule: reuse a single object instead of creating a new function- ally equivalent object each time it is needed
+
+1) implementation
+
+• static factory method: avoid create same immutable object  
+
+• reuse mutable objects if you know they won't be modified
+
+2) guide
+
+• the creation and reclamation of small objects whose constructors do little explicit work is cheap
+
+• avoiding object creation by maintaining your own object pool is a bad idea unless the objects in the pool are extremely heavyweight
+
+
+
+6. Eliminate obsolete object references (memory management)
+
+1) obsolete object reference: simply a reference that will never be dereferenced again. 
+
+• solution: 
+- eliminate an obsolete reference is to let the variable that contained the reference fall out of scope (45)
+- sometimes can use nulling out (a class manages its own memory)
+
+2) memory leaks
+
+• whenever a class manages its own memory, the pro- grammer should be alert for memory leaks
+• Another common source of memory leaks is caches
+• A third common source of memory leaks is listeners and other callbacks
+
+
+
+7. Avoid finalizer
+
+rule of thumb: avoid finalizer
+
+1) rule:
+
+• never do anything time-critical in a finalizer: as no guarantee when they will be executed
+
+• severe performance penalty for using finalizers
+
+2) correct solution
+
+•  provide an explicit termination method, and require clients of the class to invoke this method on each instance when it is no longer needed (InputStream, OutputStream, Connection)
+
+• Explicit termination methods are typically used in combination with the try-finally construct to ensure termination
+
+
+

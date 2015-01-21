@@ -1,0 +1,71 @@
+Enums and Annotations
+
+Item 30: Use enums instead of int constants
+
+1. enumerated type
+
+1) enumerated type is a type whose legal values consist of a fixed set of constants
+
+2) int enum shortcomings
+
+• provides nothing in the way of type safety and little in the way of convenience
+
+• no easy way to translate int enum constants into printable strings
+
+3) enum class
+
+• they are classes that export one instance for each enumeration constant via a public static final field
+
+- Enums provide compile-time type safety
+- Enum types with identically named constants coexist peacefully because each type has its own namespace
+- enum types let you add arbitrary methods and fields and implement arbitrary interfaces
+
+• To associate data with enum constants, declare instance fields and write a constructor that takes the data and stores it in the fields
+
+• 定义与其他的method完全一样, 只是之前需要有enum的constant(表示这个class的instance)
+
+4) Constant-specific method implementations can be combined with constant- specific data
+
+PLUS("+") {
+   double apply(double x, double y) { return x + y; }   ===> each instance have difference  method implementation
+}
+
+5) Instance share methods (like switch)
+
+• 在enum里面定义一个enum来表示有几个function的implementation(比如在周一到周日这个enum里面定义weekday和weekend, 这样weekday和weekend可以有自己独特的method)
+
+•  Switches on enums are good for augmenting external enum types with constant-specific behavior
+
+6） when to use enum
+
+• Anytime you need a fixed set of constants
+
+
+Item 31: Use instance fields instead of ordinals
+
+1) Never derive a value associated with an enum from its ordinal; store it in an instance field instead(不要用enum本身的ordinal)
+
+
+Item 32: Use EnumSet instead of bit fields
+
+1）EnumSet class to efficiently represent sets of values drawn from a single enum type
+
+• EnumSet.of(Style.BOLD, Style.ITALIC)
+
+• just because an enumerated type will be used in sets, there is no reason to represent it with bit fields
+
+
+Item 33: Use Enum Map instead of ordinal indexing
+
+1. EnumMap (key: enum type, value: any object)
+
+• The reason that EnumMap is com- parable in speed to an ordinal-indexed array is that EnumMap uses such an array internally
+
+• Map<Herb.Type, Set<Herb>> herbsByType = new EnumMap<Herb.Type, Set<Herb>>(Herb.Type.class);
+
+
+Item 34: Emulate extensible enums with interfaces
+
+1. Interface  +  Enum implements Interface
+
+这样就可以有很多Enum继承同一个interface了

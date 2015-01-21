@@ -1,0 +1,72 @@
+General Programming
+
+Item 45: Minimize the scope of local variables
+
+• The most powerful technique for minimizing the scope of a local variable is to declare it where it is first used
+
+• Nearly every local variable declaration should contain an initializer (One exception to this rule concerns try- catch statements)
+
+• prefer for loops to while loops (can decalre loop variable)
+
+
+Item 46: Prefer for-each loops to traditional for loops
+
+• Can't use for-each loop
+ 	1. Filtering—If you need to traverse a collection and remove selected elements, then you need to use an explicit iterator so that you can call its remove method.
+	2. Transforming—If you need to traverse a list or array and replace some or all of the values of its elements, then you need the list iterator or array index in order to set the value of an element.
+	3. Parallel iteration—If you need to traverse multiple collections in parallel, then you need explicit control over the iterator or index variable, so that all it- erators or index variables can be advanced in lockstep (as demonstrated unin- tentionally in the buggy card and dice examples above).
+
+
+Item 47. Know and use the libraries
+
+• If you need to do something that seems like it should be reasonably common, there may already be a class in the libraries that does what you want
+
+
+Item 48. Avoid float and boule if exact answers are required
+
+• use BigDecimal, int, or long for monetary calculations
+
+• Use BigDecimal if you want the system to keep track of the decimal point and you don’t mind the inconvenience and cost of not using a primitive type
+
+
+Item 49. Prefer primitive types to boxed primitives
+
+• major differences between primitives and boxed primitive
+ - primitives have only their values, whereas boxed primitives have identities distinct from their values
+ - primitive types have only fully functional values, whereas each boxed primitive type has one nonfunctional value
+ - primitives are generally more time- and space-efficient than boxed primitives
+
+• Applying the == operator to boxed primitives is almost always wrong
+
+• when you mix primitives and boxed primitives in a single operation, the boxed primitive is autounboxed
+
+
+Item 50: Avoid strings where other types are more appropriate 
+
+• Strings are poor substitutes for other value types, enum types, aggregate types, capabilities
+
+
+Item 51: Be ware the performance of string concatenation
+
+•  Using the string concatenation operator repeatedly to concatenate n strings requires time quadratic in n
+
+To achieve acceptable performance, use a StringBuilder in place of a String
+
+
+Item 52: Refer to objects by their interfaces
+
+1. use Interfaces 
+
+• If appropriate interface types exist, then parame- ters, return values, variables, and fields should all be declared using interface types
+
+• If you get into the habit of using interfaces as types, your program will be much more flexible
+
+• If you depend on any special properties of an implementation, document these requirements where you declare the variable
+
+2. use calsses
+
+• It is entirely appropriate to refer to an object by a class rather than an interface if no appropriate interface exists
+
+•  there is no appropriate interface type is that of objects belonging to a framework whose fundamental types are classes rather than interfaces
+
+• here is no appropriate interface type is that of classes that implement an interface but provide extra methods not found in the interface

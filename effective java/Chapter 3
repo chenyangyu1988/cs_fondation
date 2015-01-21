@@ -1,0 +1,206 @@
+Chaptor 4 Classes and Interface
+
+1. Minimize the accessibility of classes and members
+
+1) rule 
+
+• A well-designed module hides all of its implementation details, cleanly separating its API from its implementa- tion. Modules then communicate only through their APIs and are oblivious to each others’ inner workings. This concept, known as information hiding or encap- sulation
+• make each class or member as inaccessible as possible
+• instance fields should never be public (non-static)
+
+2) advantages
+
+• decouples the modules that comprise a system, allow to be developed in parallel
+• ease burden of maintainence, enables effective performance tuning
+• increase software reuse
+
+3) implementations
+
+• package-private and public
+
+ - better to make package-private if possible, easy to modify without harm exist users
+ - If a package-private top-level class (or interface) is used by only one class, consider making the top-level class a private nested class of the sole class that uses it
+
+ • test: To facilitate testing, you may be tempted to make a class, interface, or mem- ber more accessible to package private
+
+ • static final mutable fields (array, list, map): make a clone and return
+
+ 
+ 2. In public classes,use accessor methods,not public fields
+
+ 1) public class
+
+ • use accessor methods (getter and setter)
+ • if a class is accessible outside its package, provide accessor methods, to preserve the flexibility to change the class’s internal representation
+ 
+ 2) nested classes or package-private
+ 
+ • if a class is package-private or is a private nested class, there is nothing inherently wrong with exposing its data fields
+
+
+3. Minimize mutability
+
+1) rule: make class immutable
+
+• Don’t provide any methods that modify the object’s state (mutators)
+• Ensure that the class can’t be extended
+• Make all fields final and private
+• Ensure exclusive access to any mutable components (make defensive copies)
+
+2) immutable advantages
+
+• Immutable objects are simple(have only one state), reliable
+• Immutable objects are inherently thread-safe; they require no synchronization and can shared freely
+• Not only can you share immutable objects, but you can share their internals (point to internal fields)
+• Immutable objects make great building blocks for other objects (set, map key)
+
+- disadvantage: 
+real disadvantage of immutable classes is that they require a separate object for each distinct value (String +)
+
+3) usage
+
+• An immutable class can provide static factories (Item 1) that cache frequently requested instances to avoid creating new instances
+• you need not and should not provide a clone method or copy constructor (Item 11) on an immutable class
+• The package-private mutable companion class approach works fine if you can accurately predict which complex multistage operations clients will want to perform on your immutable class. If not, then your best bet is to provide a public mutable companion class (String and StringBuilder)
+
+4) alternative
+
+• static factory: flexibility of multiple implementation classes, this approach makes it possible to tune the performance of the class in subsequent releases by improving the object- caching capabilities of the static factories
+
+
+4. Favor composition over inheritance
+
+1）inheritance
+
+- rule
+• It is safe to use inheritance within a package and use inherit- ance when extending classes specifically designed and documented for extension
+• It is dangerous to inherit from ordinary concrete classes across package boundaries
+
+- disadvantages
+• Unlike method invocation, inheritance violates encapsulation: subclass depends on superclass (when superclass change  implementation, subclass may be error prune)
+
+2) composition (the existing class becomes a component of the new one)
+
+• forwarding:  Each instance method in the new class invokes the corresponding method on the contained instance of the existing class and returns the results (
+forwarding class: have a instance and method invode the instance method)
+• forwarding methods: the methods in the new class 
+==> decorate a original class
+
+
+
+5. Design and document for inheritance or else prohibit it
+
+1) class designed for inheritance
+
+• the class must document its self-use of overridable methods (when overridable methods will be called and what sequence)
+• a class may have to provide hooks into its internal workings in the form of judi- ciously chosen protected methods
+• The only way to test a class designed for inheritance is to write subclasses (3 subclasses are good)
+
+2) design inheritancde
+• *****Constructors must not invoke overridable methods, directly or indirectly
+• It is generally not a good idea for a class designed for inheritance to implement Cloneable and Serializable
+• neither clone nor readObject may invoke an overridable method, directly or indirectly
+
+3) rule of thumb
+• The best solution to this problem is to prohibit subclassing in classes that are not designed and documented to be safely subclassed
+• make class final or make class constructor private (have static factory method)
+• for inheritance: eliminate the class’s self-use of overridable methods entirely, Move the body of each overridable method to a pri- vate “helper method” and have each overridable method invoke its private helper method
+
+
+
+6. Prefer interfaces to abstract classes
+
+1) interface advantage
+
+• Existing classes can be easily retrofitted to implement a new interface
+• Interfaces are ideal for defining mixins (a mixin is a type that a class can implement in addition to its “primary type” to declare that it pro- vides some optional behavior)
+• Interfaces allow the construction of nonhierarchical type frameworks
+• Interfaces enable safe, powerful functionality enhancements via the wrap- per class idiom
+
+• You can combine the virtues of interfaces and abstract classes by providing an abstract skeletal implementation class to go with each nontrivial interface that you export
+
+2) skeleton implementations
+
+• they provide the implementa- tion assistance of abstract classes without imposing the severe constraints that abstract classes impose when they serve as type definitions
+
+• simulated multiple inheritance
+  - outer class implements interface
+  - inner class extends abstract class (which implements interface)
+  - use inner class to implement interface which abstract class do the skeleton work
+
+• It is far easier to evolve an abstract class than an interface (add new method in abstract class)
+
+3) Once an interface is released and widely implemented, it is almost impossible to change.
+
+
+7. Use interfaces only to define types
+
+1) constant interface
+
+• consists solely of static final fields, each exporting a constant. Classes using these constants implement the interface to avoid the need to qualify constant names with a class name
+• The constant interface pattern is a poor use of interfaces
+
+2) ways to export constants
+
+• if the constants are strongly tied to an existing class or interface, you should add them to the class or interface (utility class or enum)
+
+
+8. Prefer class hierarchies to tagged classes
+
+1) tag class: contain a tag field indicating the flavor of the instance
+
+• disadvantages:
+ - memory footprint is increased because instances are burdened with irrelevant fields belonging to other flavors. 
+ - Fields can’t be made final unless constructors initialize irrelevant fields, resulting in more boilerplate. 
+ - Constructors must set the tag field and initialize the right data fields with no help from the compiler
+• tagged classes are verbose, error-prone, and inefficient (tag, enum)
+
+2) transform a tagged class into a class hierarchy
+
+• define an abstract class containing an abstract method for each method in the tagged class whose behavior depends on the tag value
+• define a concrete subclass of the root class for each flavor of the original tagged class
+
+
+9. Use function objects to represent stategies (strategy pattern)
+
+1) function pointers, delegates, lambda expressions
+
+• allow programs to store and transmit the ability to invoke a par- ticular function (allow the caller of a function to specialize its behavior by passing in a second function)
+• use function objects (An instance of a class that exports exactly one such method is effectively a pointer to that method)
+
+2) impementation
+
+• declare an interface to represent the strategy
+• class that implements this interface for each concrete strategy
+• a concrete strategy is used only once, it is typically declared and instanti- ated as an anonymous class. When a concrete strategy is designed for repeated use, it is generally implemented as a private static member class and exported in a public static final field whose type is the strategy interface
+
+
+10. Favor static member classes over non static
+
+1) nested class
+
+• four kinds of nested classes: static member classes, nonstatic member classes, anonymous classes, and local classes
+
+2) static member class
+
+• features: tatic member class is a static member of its enclosing class and obeys the same accessibility rules as other static members
+
+• usage: public helper class
+
+3) non-static member class
+
+• features: Each instance of a nonstatic member class is implicitly associated with an enclosing instance of its containing class
+
+• usage: define an Adapter, that allows an instance of the outer class to be viewed as an instance of some unrelated class
+
+• disadvantage: the association takes up space in the nonstatic member class instance and adds time to its construction (each instance will have an extraneous reference to its enclosing instance)
+
+4) rule of thumb
+
+• If you declare a member class that does not require access to an enclosing instance, always put the static modifier in its declaration 
+
+
+5) anonymous class
+
+• create function objects, create process objects, static factory methods
+

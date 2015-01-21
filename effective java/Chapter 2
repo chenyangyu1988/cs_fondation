@@ -1,0 +1,101 @@
+Methods Common to All Objects
+
+1. equals()
+
+1) override
+
+a) when not to override
+• Each instance of the class is inherently unique(Thread)
+• You don’t care whether the class provides a “logical equality” test.
+• A superclass has already overridden equals, and the superclass behavior is appropriate for this class
+• Theclassisprivateorpackage-private,andyouarecertainthatitsequals method will never be invoked
+
+b) when to override (values class: integer, string)
+• notion of logical equality that differs from mere object identity
+• a superclass has not already overridden equals to implement the desired behavior
+
+2) equals properties: 
+• reflexive
+• symmetrix: superclass and subclass
+  - if !(o instanceof superclass) return false
+  - if !(o instanceof subclass) return o.equals(this)	=> use super.equals(sub)
+  - return real compare
+• transient: ColorPoint { Point, color}
+• consistent
+
+3) equals method
+
+• Use the == operator to check if the argument is a reference to this object
+• Use the instanceof operator to check if the argument has the correct type
+• Cast the argument to the correct type
+• For each “significant” field in the class, check if that field of the argument matches the corresponding field of this object
+
+
+
+2 hashcode()
+
+1) rule of thumb: 
+• A common source of bugs is the failure to override the hashCode method. You must override hashCode in every class that overrides equals.
+• *** equals return true ==>  hashcode return same value (not reversely)
+
+2) hash function
+
+• primitive field: 
+	- If the field is a boolean, compute (f ? 1 : 0).
+	- If the field is a byte, char, short, or int, compute (int) f.
+	- Ifthefieldisalong,compute(int)(f^(f>>>32)).
+	- If the field is a float, compute Float.floatToIntBits(f).
+	- If the field is a double, compute Double.doubleToLongBits(f), and then hash the resulting long as in step 2.a.iii.
+
+• object reference: recursively invoke hashCode on the field
+  return = 31 * result + c
+
+ 3) Cache hashcode do lazy initialization
+
+
+
+3. toString()
+
+1) rule of thumb:
+• Always override toString
+
+2) implementation
+• When practical, the toString method should return all of the interesting information contained in the object
+
+
+4. clone()
+
+1) implementations
+
+• implements Cloneable: Object’s clone method returns a field-by-field copy of the object; otherwise it throws CloneNotSupportedException
+
+•  in practice, a class that implements Cloneable is expected to provide a properly functioning public clone method. It is not, in general, possible to do so unless all of the class’s superclasses provide a well-behaved clone implementation, whether public or protected.
+
+2) details
+
+• super.clone() return a subclass object
+• clone() could return the subclass type
+• for mutable fields, need to do a deep clone (not work for final)
+• for recursive clone:
+	- recursive call object to clone in clone method
+ or	- set all of the fields in the resulting object to their virgin state, and then call higher-level methods to regenerate the state of the object
+
+3) summary
+
+• all classes that implement Cloneable should override clone with a public method whose return type is the class itself. This method should first call super.clone and then fix any fields that need to be fixed
+
+• object copying is to provide a copy constructor or copy factory
+
+
+5. comparable (compareTo)
+
+1) advantage
+
+• its instances have a natural ordering
+• easy to search, compute extreme values, and maintain automati- cally sorted collections
+
+2) implementation
+
+• Compare object reference fields by invoking the compareTo method recursively
+• If a field does not implement Comparable, or you need to use a nonstandard ordering, you can use an explicit Comparator instead (compare(o1, o2))
+• multiple fields need to have order

@@ -1,0 +1,165 @@
+Generics
+
+/**************   Generic 重点 *******************/
+
+1. 从generic class 生成 subclass
+
+• 必须指定generic的类型 如 public class A extends super<String> 或者 public class A extends super
+
+2. 类型通配符 和 generic type上限
+
+• 定义generic type的时候可以设置上限 public class Apple<T extends Object>
+
+• 类型通配符只可以get, 不可以add
+
+3. 类型转换
+ 
+• public static Map<String, List<String>> map = new HashMap<String, List<String>>();
+  Map<String, List<Object>> l = (Map<String, List<Object>>)(Object)map;
+
+• public static List<String> list = new ArrayList<String>();
+  List<Integer> list = (List<Integer>)(Object)list;
+
+4. generic 方法
+
+• 使用泛型方法来代替类型通配符
+ - <T extends E> boolean addAll(Collection<T> c)
+
+• 大多数使用类型通配符
+
+/************************************************/
+
+
+Item 23. Don't use raw types in new code
+
+1. terms
+
+1) generic types: generic class or interface declaration has one or more type parameters <E>
+
+2) each generic type defines a set of parameterized types (List<E> consists List<String>, List<Integer>, etc)
+
+3) each generic type defines a raw type(List), which is the name of the generic type used without any accompanying actual type parameters (但是type比较的时候比较的是raw type)
+
+
+2. use generic type but not raw type(you lose all the safety and expressiveness benefits of generic)
+
+1) advantages:
+
+• the erroneous insertion generates a compile-time error message that tells you exactly what is wrong
+• you no longer have to cast manually when removing ele- ments from collections
+
+2) unbounded wildcard (any type)
+
+• can't put in any element except null
+
+3) use raw types:
+
+•  You must use raw types in class literals (class type)
+• rule concerns the instanceof operator (to use the instanceof operator with generic types)
+
+
+
+Item 24. Eliminate unchecked warnings
+
+1. Eliminate every unchecked warning that you can
+
+• If you can’t eliminate a warning, and you can prove that the code that provoked the warning is typesafe, then (and only then) suppress the warning with an @SuppressWarnings("unchecked") annotation
+
+• Always use the Suppress- Warnings annotation on the smallest scope possible
+
+
+Item 25. Prefer lists to arrays
+
+1. list vs array
+
+1) list cast will have compile error
+• arrays are covariant(if Sub is a subtype of Super, then the array type Sub[] is a subtype of Super[])
+• list are invariant(wo distinct types Type1 and Type2, List<Type1> is neither a subtype nor a supertype of List<Type2>)
+
+2) list在插入的时候不会报错, 但是取出的时候会报错(class cast)
+• arrays are reified: arrays know and enforce their element types at runtime
+• Generics are erasure(non-reifiable): enforce their type constraints only at compile time and discard (or erase) their element type information at runtime => allows generic types to interoperate freely with legacy code that does not use generics
+- non-reifiable type is one whose runtime representation contains less information than its compile-time representa- tion
+
+3) Generic type with differenct parameter type could cast
+• public static Map<String, List<String>> map = new HashMap<String, List<String>>();
+  Map<String, List<Object>> l = (Map<String, List<Object>>)(Object)map;
+
+• public static List<String> list = new ArrayList<String>();
+  List<Integer> list = (List<Integer>)(Object)list;
+
+
+Item 26. Favor generic types
+
+1. generification 
+
+1) first step: generifying a class is to add one or more type parameters to its decla-
+ration
+2) second step: replace all the uses of the type Object with the appropriate type parameter, and then try to compile the resulting program
+3) third type: 
+  • array cast => elements = (E[]) new Object[DEFAULT_INITIAL_CAPACITY];
+	- prove unchecked cast is safe
+  • use new Object[] array, but when return cast the return type
+
+
+Item 27. Favor generic methods
+
+1. Static utility methods are particularly good candidates for generification
+
+1) method signature
+
+• public static <E> Set<E> union(Set<E> s1, Set<E> s2)  => type inference (可以推断出type是什么)
+• The type parameter list, which declares the type parameter, goes between the method’s modifiers and its return type
+• use bounded wildcard types give more flexibility
+
+2) usage
+
+• generic static factory method
+	public static <K,V> HashMap<K,V> newHashMap() {
+       return new HashMap<K,V>();
+	}
+
+• recursive type bound
+ - public static <T extends Comparable<T>> T max(List<T> list) { ...}
+ - for every type T that can be compared to itself
+
+
+Item 28. Use bounded wildcards to increase API flexibility
+
+1. bounded wildcard type
+
+1) define the super type and sub type (like Interger could cast to Number)
+
+• Iterable<? extends E> src
+• Collection<? super E> dst
+
+2) For maximum flexibility, use wildcard types on input parameters that represent producers or consumers
+
+• ***** PECS stands for producer-extends, consumer-super
+ - producer 表示从这个里面取出: 因为是取出, 所以可以用super的method
+ - customer 表示往这个里面插入: 因为是使用, 只可以super的(取出可以cast)
+
+•  If the user of a class has to think about wildcard types, there is probably something wrong with the class’s API
+
+3） if a type parameter appears only once in a method declaration, replace it with a wildcard
+
+• public static <E> void swap(List<E> list, int i, int j);
+  public static void swap(List<?> list, int i, int j);
+
+
+Item 29. Consider type safe heterogeneous containers 
+
+1. arbitrary size of parameterized types (typesafe and heterogeneous)
+
+1) typesafe heterogeneous container (不同类型class的, 放在同一个container下)
+
+• Class<T> 是一个object, 用作hashmap的key
+ - parameterize the key instead of the container. Then present the parameterized key to the container to insert or retrieve a value
+
+• Map<Class<?>, Object> favorites = new HashMap<Class<?>, Object>();
+ - key 可以是任何Class<?>
+
+
+
+
+
